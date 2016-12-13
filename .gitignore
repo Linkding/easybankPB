@@ -1,2 +1,4 @@
 *.csv
 .ipynb_checkpoints
+get_nei_bank.py
+*.png

@@ -2,17 +2,23 @@
 import urllib
 import pandas as pd
 import random
+import os
+import smtplib
+from email.mime.text import MIMEText
 
+banknum='/Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/banknum.md'
 
+## collect data from yahoo finance
 def collect():
-    with open('banknum.md','r') as f:
+    with open(banknum,'r') as f:
         for i in f.read().splitlines():
             url = 'http://table.finance.yahoo.com/table.csv?s=' + i +'.HK'
             filename = i + '.csv'
             urllib.urlretrieve (url, filename)
 
+## change pbvs to DataFrame
 def change_dataframe():
-    with open('banknum.md','r') as f:
+    with open(banknum,'r') as f:
         for i in f.read().splitlines():
             filename1 = 'bookvalue' + i + '.txt'
             filename2 = 'bookvalue' + i + '.csv'
@@ -24,9 +30,9 @@ def change_dataframe():
             df = pd.DataFrame(data = frame, columns=['codenumber', 'Date','bookvalue','changerate'])
             df.to_csv(filename2,index=False,header=True)
 
-
+## merge two table(csv) to one result csv
 def merge():
-    with open('banknum.md','r') as f:
+    with open(banknum,'r') as f:
             for i in f.read().splitlines():
                 filename1 = i + '.csv'
                 filename2 = 'bookvalue' + i + '.csv'
@@ -56,6 +62,19 @@ def merge():
 
                 merge['PB'] = merge['Close'] /( merge['bookvalue'] / merge['changerate'])
                 merge.to_csv(filename3,index=False,header=True)
+
+## collect every lasted pb data
+def collect_pb():
+    frame = []
+    with open(banknum,'r') as f:
+            for i in f.read().splitlines():
+                filename1 = 'merge' + i + '.csv'
+                stockdata = pd.read_csv(filename1)
+                line = stockdata[['Date','codenumber','name','Close','bookvalue','PB']][:1]
+                frame.append(line)
+                result = pd.concat(frame)
+            result.sort_values('PB').to_csv('hk_pb.csv',index=False,header=True)
+
 
 if __name__ ==  "__main__":
         collect()

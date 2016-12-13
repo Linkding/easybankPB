@@ -90,23 +90,24 @@ def send_mail():
         #msg = MIMEText(fp.read())
         fp.close()
 
-        you = '619216759@qq.com'
+        you = ['619216759@qq.com','linxiaobin@efun.com']
         me = '13760613343@139.com'
         msg['Subject'] = '昨日的内银股PB排行'
+        msg['To']=','.join(you)
         msg['From'] = me
-        msg['To'] = you
+        #msg['To'] = you
 
         # Send the message via our own SMTP server, but don't include the
         # envelope header.
         s = smtplib.SMTP('smtp.139.com')
-        s.login('13760613343','***')
-        s.sendmail(me, [you], msg.as_string())
+        s.login('13760613343','inaoin2016')
+        s.sendmail(me, you, msg.as_string())
         s.quit()
 
 if __name__ ==  "__main__":
-#    collect()
-#    change_dataframe()
-#    merge()
-#    collect_pb()
-    change_csv_html()
-    send_mail()
+    collect()
+    change_dataframe()
+    merge()
+    collect_pb()
+#    change_csv_html()
+#    send_mail()
