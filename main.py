@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import urllib
 import pandas as pd
 import random
@@ -75,14 +76,40 @@ def collect_pb():
             for i in f.read().splitlines():
                 filename1 = 'merge' + i + '.csv'
                 stockdata = pd.read_csv(filename1)
-                line = stockdata[['Codenumber','Name','Date','bookvalue','changerate','PB']][:1]
+                line = stockdata[['Date','Codenumber','Name','bookvalue','changerate','Close','PB']][:1]
                 frame.append(line)
                 result = pd.concat(frame)
             result.sort_values('PB').to_csv('hk_pb.csv',index=False,header=True)
 
+def change_csv_html():
+    os.system('python  /Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/NeiBank/csv2html/csv2html/csv2html.py -o /Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/hk_pb.html /Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/hk_pb.csv')
+
+def send_mail():
+        fp = open('hk_pb.html', 'r')
+
+        msg = MIMEText(fp.read(),'html')
+        # Create a text/plain message
+        #msg = MIMEText(fp.read())
+        fp.close()
+
+        you = ['619216759@qq.com']
+        me = '13760613343@139.com'
+        msg['Subject'] = '香港内银股PB排行'
+        msg['To']=','.join(you)
+        msg['From'] = me
+        #msg['To'] = you
+
+        # Send the message via our own SMTP server, but don't include the
+        # envelope header.
+        s = smtplib.SMTP('smtp.139.com')
+        s.login('13760613343','****')
+        s.sendmail(me, you, msg.as_string())
+        s.quit()
 
 if __name__ ==  "__main__":
 #        collect()
 #        change_dataframe()
-        merge()
-        collect_pb()
+#        merge()
+#        collect_pb()
+#        change_csv_html()
+        send_mail()
