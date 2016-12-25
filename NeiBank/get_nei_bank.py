@@ -8,8 +8,10 @@ import os
 import smtplib
 from email.mime.text import MIMEText
 
+banknum_china='/lin/easybankPB/NeiBank/banknum_china.md'
+
 def collect():
-    with open('banknum_china.md','r') as f:
+    with open(banknum_china,'r') as f:
         for i in f.read().splitlines():
             if i[0] == '0' :
                 url = 'http://table.finance.yahoo.com/table.csv?s=' + i +'.SZ'
@@ -21,7 +23,7 @@ def collect():
                 urllib.urlretrieve (url, filename)
 
 def change_dataframe():
-    with open('banknum_china.md','r') as f:
+    with open(banknum_china,'r') as f:
         for i in f.read().splitlines():
             filename1 = 'bookvalue' + i + '.txt'
             filename2 = 'bookvalue' + i + '.csv'
@@ -33,7 +35,7 @@ def change_dataframe():
             df = pd.DataFrame(data = frame, columns=['codenumber', 'name','Date','bookvalue'])
             df.to_csv(filename2,index=False,header=True)
 def merge():
-    with open('banknum_china.md','r') as f:
+    with open(banknum_china,'r') as f:
             for i in f.read().splitlines():
                 filename1 = i + '.csv'
                 filename2 = 'bookvalue' + i + '.csv'
@@ -69,7 +71,7 @@ def merge():
 
 def collect_pb():
     frame = []
-    with open('banknum_china.md','r') as f:
+    with open(banknum_china,'r') as f:
             for i in f.read().splitlines():
                 filename1 = 'merge' + i + '.csv'
                 stockdata = pd.read_csv(filename1)
@@ -80,8 +82,8 @@ def collect_pb():
 
 
 def change_csv_html():
-    os.system('sh /Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/NeiBank/cvs2html.sh')
-
+    os.system('sh /lin/easybankPB/NeiBank/cvs2html.sh')
+    os.system('cat /lin/easybankPB/NeiBank/hk_pb.html >>/lin/easybankPB/NeiBank/nei_pb.html')
 def send_mail():
         fp = open('nei_pb.html', 'r')
 
@@ -90,7 +92,8 @@ def send_mail():
         #msg = MIMEText(fp.read())
         fp.close()
 
-        you = ['619216759@qq.com','linxiaobin@efun.com']
+        you = ['619216759@qq.com','389437787@qq.com','66210683@qq.com','770651456@qq.com','lf160@126.com']
+        #you = ['619216759@qq.com']
         me = '13760613343@139.com'
         msg['Subject'] = '昨日的内银股PB排行'
         msg['To']=','.join(you)
@@ -109,5 +112,5 @@ if __name__ ==  "__main__":
     change_dataframe()
     merge()
     collect_pb()
-#    change_csv_html()
-#    send_mail()
+    change_csv_html()
+    send_mail()
