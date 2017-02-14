@@ -7,7 +7,7 @@ import os
 import smtplib
 from email.mime.text import MIMEText
 
-banknum='/Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/banknum.md'
+banknum='/lin/easybankPB/NeiBank/banknum.md'
 
 ## collect data from yahoo finance
 def collect():
@@ -82,8 +82,9 @@ def collect_pb():
             result.sort_values('PB').to_csv('hk_pb.csv',index=False,header=True)
 
 def change_csv_html():
-    os.system('python  /Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/NeiBank/csv2html/csv2html/csv2html.py -o /Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/hk_pb.html /Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/hk_pb.csv')
-
+    os.system('python /lin/csv2html/csv2html/csv2html.py -o /lin/easybankPB/NeiBank/hk_pb.html /lin/easybankPB/NeiBank/hk_pb.csv')
+	
+ 	
 def send_mail():
         fp = open('hk_pb.html', 'r')
 
@@ -107,9 +108,9 @@ def send_mail():
         s.quit()
 
 if __name__ ==  "__main__":
-#        collect()
-#        change_dataframe()
-#        merge()
-#        collect_pb()
-#        change_csv_html()
-        send_mail()
+        collect()
+        change_dataframe()
+        merge()
+        collect_pb()
+        change_csv_html()
+#        send_mail()
