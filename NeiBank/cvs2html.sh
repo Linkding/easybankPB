@@ -1,1 +1,1 @@
-python /Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/NeiBank/csv2html/csv2html/csv2html.py -o nei_pb.html /Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/NeiBank/nei_pb.csv
+python /lin/csv2html/csv2html/csv2html.py -o /lin/easybankPB/NeiBank/nei_pb.html /lin/easybankPB/NeiBank/nei_pb.csv
