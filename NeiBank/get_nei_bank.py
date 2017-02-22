@@ -108,6 +108,9 @@ def send_mail():
         s.sendmail(me, you, msg.as_string())
         s.quit()
 
+def update_into_mysql():
+    os.system('sh /root/sh_dir/easypb_update_into_msyql.sh')
+
 if __name__ ==  "__main__":
     collect()
     change_dataframe()
@@ -115,3 +118,4 @@ if __name__ ==  "__main__":
     collect_pb()
     change_csv_html()
     send_mail()
+    update_into_mysql()
