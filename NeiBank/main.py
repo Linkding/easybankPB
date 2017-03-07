@@ -76,7 +76,7 @@ def collect_pb():
             for i in f.read().splitlines():
                 filename1 = 'merge' + i + '.csv'
                 stockdata = pd.read_csv(filename1)
-                line = stockdata[['Date','Codenumber','Name','bookvalue','changerate','Close','PB']][:1]
+                line = stockdata[['Date','Codenumber','Name','Close','bookvalue','changerate','PB']][:1]
                 frame.append(line)
                 result = pd.concat(frame)
             result.sort_values('PB').to_csv('hk_pb.csv',index=False,header=True)
