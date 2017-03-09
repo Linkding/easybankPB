@@ -92,7 +92,7 @@ def send_mail():
         #msg = MIMEText(fp.read())
         fp.close()
 
-        you = ['619216759@qq.com','389437787@qq.com','66210683@qq.com','770651456@qq.com','lf160@126.com']
+        you = ['254731853@qq.com','619216759@qq.com','389437787@qq.com','66210683@qq.com','770651456@qq.com','lf160@126.com']
         #you = ['619216759@qq.com']
         #you = ['619216759@qq.com','77406458@qq.com']
         me = '13760613343@139.com'
