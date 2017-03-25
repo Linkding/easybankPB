@@ -8,7 +8,7 @@ import smtplib
 from email.mime.text import MIMEText
 
 banknum='/lin/easybankPB/NeiBank/banknum.md'
-
+#banknum='/Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/banknumtest.md'
 ## collect data from yahoo finance
 def collect():
     with open(banknum,'r') as f:
@@ -28,8 +28,10 @@ def change_dataframe():
             x_2 = [x.strip().split(' ')[2] for x in open(filename1).readlines()]
             x_3 = [x.strip().split(' ')[3] for x in open(filename1).readlines()]
             x_4 = [x.strip().split(' ')[4] for x in open(filename1).readlines()]
-            frame = list(zip(x_0,x_1,x_2,x_3,x_4))
-            df = pd.DataFrame(data = frame, columns=['Codenumber','Name','Date','bookvalue','changerate'])
+            x_5 = [x.strip().split(' ')[5] for x in open(filename1).readlines()]
+            x_6 = [x.strip().split(' ')[6] for x in open(filename1).readlines()]
+            frame = list(zip(x_0,x_1,x_2,x_3,x_4,x_5,x_6))
+            df = pd.DataFrame(data = frame, columns=['Codenumber','Name','Date','Bookvalue','Changerate','ROE','D_rate'])
             df.to_csv(filename2,index=False,header=True)
 
 ## merge two table(csv) to one result csv
@@ -56,18 +58,23 @@ def merge():
                     num1 = index_num[i][0]
                     num2 = index_num[i2][0]
                     if i == 0:
-                        merge.loc[0:num1,'bookvalue'] = merge['bookvalue'][num1]
+                        merge.loc[0:num1,'Bookvalue'] = merge['Bookvalue'][num1]
                         merge.loc[0:num1,'Name'] = merge['Name'][num1]
                         merge.loc[0:num1,'Codenumber'] = merge['Codenumber'][num1]
-                        merge.loc[0:num1,'changerate'] = merge['changerate'][num1]
+                        merge.loc[0:num1,'Changerate'] = merge['Changerate'][num1]
+                        merge.loc[0:num1,'ROE'] = merge['ROE'][num1]
+                        merge.loc[0:num1,'D_rate'] = merge['D_rate'][num1]
                     else:
-                        merge.loc[num2:num1,'bookvalue'] = merge['bookvalue'][num1]
+                        merge.loc[num2:num1,'Bookvalue'] = merge['Bookvalue'][num1]
                         merge.loc[0:num1,'Name'] = merge['Name'][num1]
                         merge.loc[0:num1,'Codenumber'] = merge['Codenumber'][num1]
-                        merge.loc[num2:num1,'changerate'] = merge['changerate'][num1]
+                        merge.loc[num2:num1,'Changerate'] = merge['Changerate'][num1]
+                        merge.loc[0:num1,'ROE'] = merge['ROE'][num1]
+                        merge.loc[0:num1,'D_rate'] = merge['D_rate'][num1]
 
-                merge['PB'] = merge['Close'] /( merge['bookvalue'] / merge['changerate'])
-                merge.to_csv(filename3,index=False,header=True)
+                merge['PB'] = merge['Close'] /( merge['Bookvalue'] / merge['Changerate'])
+                merge['E_yield'] = ((1 + (merge['ROE']* merge['D_rate']) / (merge['PB'] - merge['ROE'] * merge['D_rate'])) * (1 + merge['ROE'] * (1 - merge['D_rate']))) - 1
+                merge.round(3).to_csv(filename3,index=False,header=True)
 
 ## collect every lasted pb data
 def collect_pb():
@@ -76,15 +83,15 @@ def collect_pb():
             for i in f.read().splitlines():
                 filename1 = 'merge' + i + '.csv'
                 stockdata = pd.read_csv(filename1)
-                line = stockdata[['Date','Codenumber','Name','Close','bookvalue','changerate','PB']][:1]
+                line = stockdata[['Date','Codenumber','Name','Close','Bookvalue','Changerate','ROE','D_rate','PB','E_yield']][:1]
                 frame.append(line)
                 result = pd.concat(frame)
             result.sort_values('PB').to_csv('hk_pb.csv',index=False,header=True)
 
 def change_csv_html():
     os.system('python /lin/csv2html/csv2html/csv2html.py -o /lin/easybankPB/NeiBank/hk_pb.html /lin/easybankPB/NeiBank/hk_pb.csv')
-	
- 	
+
+
 def send_mail():
         fp = open('hk_pb.html', 'r')
 

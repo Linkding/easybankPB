@@ -9,6 +9,7 @@ import smtplib
 from email.mime.text import MIMEText
 
 banknum_china='/lin/easybankPB/NeiBank/banknum_china.md'
+#banknum_china='/Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/banknumtest.md'
 
 def collect():
     with open(banknum_china,'r') as f:
@@ -31,8 +32,10 @@ def change_dataframe():
             x_1 = [x.strip().split(' ')[1] for x in open(filename1).readlines()]
             x_2 = [x.strip().split(' ')[2] for x in open(filename1).readlines()]
             x_3 = [x.strip().split(' ')[3] for x in open(filename1).readlines()]
-            frame = list(zip(x_0,x_1,x_2,x_3))
-            df = pd.DataFrame(data = frame, columns=['codenumber', 'name','Date','bookvalue'])
+            x_4 = [x.strip().split(' ')[4] for x in open(filename1).readlines()]
+            x_5 = [x.strip().split(' ')[5] for x in open(filename1).readlines()]
+            frame = list(zip(x_0,x_1,x_2,x_3,x_4,x_5))
+            df = pd.DataFrame(data = frame, columns=['codenumber','name','Date','bookvalue','ROE','D_rate'])
             df.to_csv(filename2,index=False,header=True)
 def merge():
     with open(banknum_china,'r') as f:
@@ -60,14 +63,19 @@ def merge():
                         merge.loc[0:num1,'bookvalue'] = merge['bookvalue'][num1]
                         merge.loc[0:num1,'name'] = merge['name'][num1]
                         merge.loc[0:num1,'codenumber'] = merge['codenumber'][num1]
+                        merge.loc[0:num1,'ROE'] = merge['ROE'][num1]
+                        merge.loc[0:num1,'D_rate'] = merge['D_rate'][num1]
                     else:
                         merge.loc[num2:num1,'bookvalue'] = merge['bookvalue'][num1]
                         merge.loc[0:num1,'name'] = merge['name'][num1]
                         merge.loc[0:num1,'codenumber'] = merge['codenumber'][num1]
+                        merge.loc[0:num1,'ROE'] = merge['ROE'][num1]
+                        merge.loc[0:num1,'D_rate'] = merge['D_rate'][num1]
 
                 merge['PB'] = merge['Close'] /( merge['bookvalue'])
+                merge['E_yield'] = ((1 + (merge['ROE']* merge['D_rate']) / (merge['PB'] - merge['ROE'] * merge['D_rate'])) * (1 + merge['ROE'] * (1 - merge['D_rate']))) - 1
 #                merge['PB'].set_option('precision',3)
-                merge.to_csv(filename3,index=False,header=True)
+                merge.round(3).to_csv(filename3,index=False,header=True)
 
 def collect_pb():
     frame = []
@@ -75,7 +83,7 @@ def collect_pb():
             for i in f.read().splitlines():
                 filename1 = 'merge' + i + '.csv'
                 stockdata = pd.read_csv(filename1)
-                line = stockdata[['Date','codenumber','name','Close','bookvalue','PB']][:1]
+                line = stockdata[['Date','codenumber','name','Close','bookvalue','ROE','D_rate','PB','E_yield']][:1]
                 frame.append(line)
                 result = pd.concat(frame)
             result.sort_values('PB').to_csv('nei_pb.csv',index=False,header=True)
@@ -118,4 +126,4 @@ if __name__ ==  "__main__":
     collect_pb()
     change_csv_html()
     send_mail()
-    update_into_mysql()
+#    update_into_mysql()
