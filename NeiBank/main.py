@@ -86,7 +86,8 @@ def collect_pb():
                 line = stockdata[['Date','Codenumber','Name','Close','Bookvalue','Changerate','ROE','D_rate','PB','E_yield']][:1]
                 frame.append(line)
                 result = pd.concat(frame)
-            result.sort_values('PB').to_csv('hk_pb.csv',index=False,header=True)
+		result.columns=['Date','Codenumber','Name','Close','Bookvalue','Changerate','ROE','D_rate','PB','预期收益率']
+            result.sort_values('预期收益率').to_csv('hk_pb.csv',index=False,header=True)
 
 def change_csv_html():
     os.system('python /lin/csv2html/csv2html/csv2html.py -o /lin/easybankPB/NeiBank/hk_pb.html /lin/easybankPB/NeiBank/hk_pb.csv')

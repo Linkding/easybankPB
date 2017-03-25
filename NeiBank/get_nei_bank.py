@@ -8,8 +8,8 @@ import os
 import smtplib
 from email.mime.text import MIMEText
 
-#banknum_china='/lin/easybankPB/NeiBank/banknum_china.md'
-banknum_china='/Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/NeiBank/banknum_china.md'
+banknum_china='/lin/easybankPB/NeiBank/banknum_china.md'
+#banknum_china='/Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/NeiBank/banknum_china.md'
 
 def collect():
     with open(banknum_china,'r') as f:
@@ -86,7 +86,8 @@ def collect_pb():
                 line = stockdata[['Date','codenumber','name','Close','bookvalue','ROE','D_rate','PB','E_yield']][:1]
                 frame.append(line)
                 result = pd.concat(frame)
-            result.sort_values('PB').to_csv('nei_pb.csv',index=False,header=True)
+                result.columns=['Date','codenumber','name','Close','bookvalue','ROE','D_rate','PB','预期收益率']
+            result.sort_values('预期收益率').to_csv('nei_pb.csv',index=False,header=True)
 
 
 def change_csv_html():
@@ -124,6 +125,6 @@ if __name__ ==  "__main__":
     change_dataframe()
     merge()
     collect_pb()
-#    change_csv_html()
-#    send_mail()
+    change_csv_html()
+    send_mail()
 #    update_into_mysql()
