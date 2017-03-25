@@ -69,8 +69,8 @@ def merge():
                         merge.loc[0:num1,'Name'] = merge['Name'][num1]
                         merge.loc[0:num1,'Codenumber'] = merge['Codenumber'][num1]
                         merge.loc[num2:num1,'Changerate'] = merge['Changerate'][num1]
-                        merge.loc[0:num1,'ROE'] = merge['ROE'][num1]
-                        merge.loc[0:num1,'D_rate'] = merge['D_rate'][num1]
+                        merge.loc[num2:num1,'ROE'] = merge['ROE'][num1]
+                        merge.loc[num2:num1,'D_rate'] = merge['D_rate'][num1]
 
                 merge['PB'] = merge['Close'] /( merge['Bookvalue'] / merge['Changerate'])
                 merge['E_yield'] = ((1 + (merge['ROE']* merge['D_rate']) / (merge['PB'] - merge['ROE'] * merge['D_rate'])) * (1 + merge['ROE'] * (1 - merge['D_rate']))) - 1

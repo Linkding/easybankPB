@@ -8,8 +8,8 @@ import os
 import smtplib
 from email.mime.text import MIMEText
 
-banknum_china='/lin/easybankPB/NeiBank/banknum_china.md'
-#banknum_china='/Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/banknumtest.md'
+#banknum_china='/lin/easybankPB/NeiBank/banknum_china.md'
+banknum_china='/Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/NeiBank/banknum_china.md'
 
 def collect():
     with open(banknum_china,'r') as f:
@@ -69,8 +69,8 @@ def merge():
                         merge.loc[num2:num1,'bookvalue'] = merge['bookvalue'][num1]
                         merge.loc[0:num1,'name'] = merge['name'][num1]
                         merge.loc[0:num1,'codenumber'] = merge['codenumber'][num1]
-                        merge.loc[0:num1,'ROE'] = merge['ROE'][num1]
-                        merge.loc[0:num1,'D_rate'] = merge['D_rate'][num1]
+                        merge.loc[num2:num1,'ROE'] = merge['ROE'][num1]
+                        merge.loc[num2:num1,'D_rate'] = merge['D_rate'][num1]
 
                 merge['PB'] = merge['Close'] /( merge['bookvalue'])
                 merge['E_yield'] = ((1 + (merge['ROE']* merge['D_rate']) / (merge['PB'] - merge['ROE'] * merge['D_rate'])) * (1 + merge['ROE'] * (1 - merge['D_rate']))) - 1
@@ -100,8 +100,8 @@ def send_mail():
         #msg = MIMEText(fp.read())
         fp.close()
 
-        you = ['254731853@qq.com','619216759@qq.com','389437787@qq.com','66210683@qq.com','770651456@qq.com','lf160@126.com']
-        #you = ['619216759@qq.com']
+        #you = ['254731853@qq.com','619216759@qq.com','389437787@qq.com','66210683@qq.com','770651456@qq.com','lf160@126.com']
+        you = ['619216759@qq.com']
         #you = ['619216759@qq.com','77406458@qq.com']
         me = '13760613343@139.com'
         msg['Subject'] = '昨日的内银股PB排行'
@@ -124,6 +124,6 @@ if __name__ ==  "__main__":
     change_dataframe()
     merge()
     collect_pb()
-    change_csv_html()
-    send_mail()
+#    change_csv_html()
+#    send_mail()
 #    update_into_mysql()
