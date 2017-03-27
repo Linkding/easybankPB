@@ -74,7 +74,7 @@ def merge():
 
                 merge['PB'] = merge['Close'] /( merge['bookvalue'])
                 merge['AV_ROE'] = merge['ROE'].mean()
-                merge['E_yield'] = ((1 + (merge['AV_ROE']* merge['D_rate']) / (merge['PB'] - merge['AV_ROE'] * merge['D_rate'])) * (1 + merge['AV_ROE'] * (1 - merge['D_rate']))) - 1
+                merge['E_yield'] = ((1 + (merge['ROE']* merge['D_rate']) / (merge['PB'] - merge['AV_ROE'] * merge['D_rate'])) * (1 + merge['AV_ROE'] * (1 - merge['D_rate']))) - 1
 #                merge['PB'].set_option('precision',3)
                 merge.round(3).to_csv(filename3,index=False,header=True)
 
@@ -84,12 +84,11 @@ def collect_pb():
             for i in f.read().splitlines():
                 filename1 = 'merge' + i + '.csv'
                 stockdata = pd.read_csv(filename1)
-                line = stockdata[['Date','codenumber','name','Close','bookvalue','ROE','D_rate','PB','E_yield']][:1]
+                line = stockdata[['Date','codenumber','name','Close','bookvalue','ROE','AV_ROE','D_rate','PB','E_yield']][:1]
                 frame.append(line)
                 result = pd.concat(frame)
                 result.columns=['Date','codenumber','name','Close','bookvalue','ROE','AV_ROE','D_rate','PB','预期收益率']
             result.sort_values('预期收益率').to_csv('nei_pb.csv',index=False,header=True)
-
 
 
 def change_csv_html():
