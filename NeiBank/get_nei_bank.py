@@ -73,7 +73,8 @@ def merge():
                         merge.loc[num2:num1,'D_rate'] = merge['D_rate'][num1]
 
                 merge['PB'] = merge['Close'] /( merge['bookvalue'])
-                merge['E_yield'] = ((1 + (merge['ROE']* merge['D_rate']) / (merge['PB'] - merge['ROE'] * merge['D_rate'])) * (1 + merge['ROE'] * (1 - merge['D_rate']))) - 1
+                merge['AV_ROE'] = merge['ROE'].mean()
+                merge['E_yield'] = ((1 + (merge['AV_ROE']* merge['D_rate']) / (merge['PB'] - merge['AV_ROE'] * merge['D_rate'])) * (1 + merge['AV_ROE'] * (1 - merge['D_rate']))) - 1
 #                merge['PB'].set_option('precision',3)
                 merge.round(3).to_csv(filename3,index=False,header=True)
 
@@ -86,8 +87,9 @@ def collect_pb():
                 line = stockdata[['Date','codenumber','name','Close','bookvalue','ROE','D_rate','PB','E_yield']][:1]
                 frame.append(line)
                 result = pd.concat(frame)
-                result.columns=['Date','codenumber','name','Close','bookvalue','ROE','D_rate','PB','预期收益率']
+                result.columns=['Date','codenumber','name','Close','bookvalue','ROE','AV_ROE','D_rate','PB','预期收益率']
             result.sort_values('预期收益率').to_csv('nei_pb.csv',index=False,header=True)
+
 
 
 def change_csv_html():
@@ -101,8 +103,8 @@ def send_mail():
         #msg = MIMEText(fp.read())
         fp.close()
 
-        #you = ['254731853@qq.com','619216759@qq.com','389437787@qq.com','66210683@qq.com','770651456@qq.com','lf160@126.com']
-        you = ['619216759@qq.com']
+        you = ['254731853@qq.com','619216759@qq.com','389437787@qq.com','66210683@qq.com','770651456@qq.com','lf160@126.com']
+        #you = ['619216759@qq.com']
         #you = ['619216759@qq.com','77406458@qq.com']
         me = '13760613343@139.com'
         msg['Subject'] = '昨日的内银股PB排行'
