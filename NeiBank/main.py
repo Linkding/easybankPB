@@ -7,8 +7,8 @@ import os
 import smtplib
 from email.mime.text import MIMEText
 
-banknum='/lin/easybankPB/NeiBank/banknum.md'
-#banknum='/Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/banknumtest.md'
+#banknum='/lin/easybankPB/NeiBank/banknum.md'
+banknum='/Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/banknumtest.md'
 ## collect data from yahoo finance
 def collect():
     with open(banknum,'r') as f:
@@ -73,7 +73,9 @@ def merge():
                         merge.loc[num2:num1,'D_rate'] = merge['D_rate'][num1]
 
                 merge['PB'] = merge['Close'] /( merge['Bookvalue'] / merge['Changerate'])
-                merge['E_yield'] = ((1 + (merge['ROE']* merge['D_rate']) / (merge['PB'] - merge['ROE'] * merge['D_rate'])) * (1 + merge['ROE'] * (1 - merge['D_rate']))) - 1
+                merge['AV_ROE'] = merge['ROE'].mean()
+                merge['E_yield'] = ((1 + (merge['AV_ROE']* merge['D_rate']) / (merge['PB'] - merge['AV_ROE'] * merge['D_rate'])) * (1 + merge['AV_ROE'] * (1 - merge['D_rate']))) - 1
+                #merge.columns=[]
                 merge.round(3).to_csv(filename3,index=False,header=True)
 
 ## collect every lasted pb data
@@ -83,11 +85,12 @@ def collect_pb():
             for i in f.read().splitlines():
                 filename1 = 'merge' + i + '.csv'
                 stockdata = pd.read_csv(filename1)
-                line = stockdata[['Date','Codenumber','Name','Close','Bookvalue','Changerate','ROE','D_rate','PB','E_yield']][:1]
+                line = stockdata[['Date','Codenumber','Name','Close','Bookvalue','Changerate','ROE','AV_ROE','D_rate','PB','E_yield']][:1]
                 frame.append(line)
                 result = pd.concat(frame)
-		result.columns=['Date','Codenumber','Name','Close','Bookvalue','Changerate','ROE','D_rate','PB','预期收益率']
+                result.columns=['Date','Codenumber','Name','Close','Bookvalue','Changerate','ROE','AV_ROE','D_rate','PB','预期收益率']
             result.sort_values('预期收益率').to_csv('hk_pb.csv',index=False,header=True)
+
 
 def change_csv_html():
     os.system('python /lin/csv2html/csv2html/csv2html.py -o /lin/easybankPB/NeiBank/hk_pb.html /lin/easybankPB/NeiBank/hk_pb.csv')
