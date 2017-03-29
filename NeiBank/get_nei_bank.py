@@ -88,7 +88,7 @@ def collect_pb():
                 frame.append(line)
                 result = pd.concat(frame)
                 result.columns=['Date','codenumber','name','Close','bookvalue','ROE','AV_ROE','D_rate','PB','预期收益率']
-            result.sort_values('预期收益率').to_csv('nei_pb.csv',index=False,header=True)
+            result.sort_values('PB').to_csv('nei_pb.csv',index=False,header=True)
 
 
 def change_csv_html():
