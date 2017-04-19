@@ -7,8 +7,8 @@ import os
 import smtplib
 from email.mime.text import MIMEText
 
-#banknum='/lin/easybankPB/NeiBank/banknum.md'
-banknum='/Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/banknumtest.md'
+banknum='/lin/easybankPB/NeiBank/banknum.md'
+#banknum='/Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/banknumtest.md'
 ## collect data from yahoo finance
 def collect():
     with open(banknum,'r') as f:

@@ -128,4 +128,4 @@ if __name__ ==  "__main__":
     collect_pb()
     change_csv_html()
     send_mail()
-#    update_into_mysql()
+    update_into_mysql()
