@@ -6,6 +6,7 @@ import pandas as pd
 import random
 import os
 import smtplib
+import tushare as ts
 from email.mime.text import MIMEText
 
 banknum_china='/lin/easybankPB/NeiBank/banknum_china.md'
@@ -23,6 +24,14 @@ def collect():
                 filename = i + '.csv'
                 urllib.urlretrieve (url, filename)
 
+def collect_new():
+    with open(banknum_china,'r') as f:
+        for i in f.read().splitlines():
+                st = ts.get_hist_data(i)
+                filename = i + '.csv'
+                df = pd.DataFrame(data = st)
+                df.to_csv(filename)
+
 def change_dataframe():
     with open(banknum_china,'r') as f:
         for i in f.read().splitlines():
@@ -35,7 +44,7 @@ def change_dataframe():
             x_4 = [x.strip().split(' ')[4] for x in open(filename1).readlines()]
             x_5 = [x.strip().split(' ')[5] for x in open(filename1).readlines()]
             frame = list(zip(x_0,x_1,x_2,x_3,x_4,x_5))
-            df = pd.DataFrame(data = frame, columns=['codenumber','name','Date','bookvalue','ROE','D_rate'])
+            df = pd.DataFrame(data = frame, columns=['codenumber','name','date','bookvalue','ROE','D_rate'])
             df.to_csv(filename2,index=False,header=True)
 def merge():
     with open(banknum_china,'r') as f:
@@ -43,16 +52,16 @@ def merge():
                 filename1 = i + '.csv'
                 filename2 = 'bookvalue' + i + '.csv'
                 filename3 = 'merge' + i + '.csv'
-                stockdata = pd.read_csv(filename1)
-                bookvalue = pd.read_csv(filename2)
+                stockdata = pd.read_csv(filename1,error_bad_lines=False)
+                bookvalue = pd.read_csv(filename2,error_bad_lines=False)
 
-                merge = pd.merge(stockdata, bookvalue, how='outer', on=['Date'])
-                merge.sort_values('Date',ascending=False)
+                merge = pd.merge(stockdata, bookvalue, how='outer', on=['date'])
+                merge.sort_values('date',ascending=False)
 
 
                 index_num = []
-                for i in bookvalue['Date']:
-                    h = merge[merge.Date == i].index.tolist()
+                for i in bookvalue['date']:
+                    h = merge[merge.date == i].index.tolist()
                     index_num.append(h)
 
                 for i in range(len(index_num)):
@@ -72,7 +81,7 @@ def merge():
                         merge.loc[num2:num1,'ROE'] = merge['ROE'][num1]
                         merge.loc[num2:num1,'D_rate'] = merge['D_rate'][num1]
 
-                merge['PB'] = merge['Close'] /( merge['bookvalue'])
+                merge['PB'] = merge['close'] /( merge['bookvalue'])
                 merge['AV_ROE'] = merge['ROE'].mean()
                 merge['E_yield'] = ((1 + (merge['ROE']* merge['D_rate']) / (merge['PB'] - merge['AV_ROE'] * merge['D_rate'])) * (1 + merge['AV_ROE'] * (1 - merge['D_rate']))) - 1
 #                merge['PB'].set_option('precision',3)
@@ -84,7 +93,7 @@ def collect_pb():
             for i in f.read().splitlines():
                 filename1 = 'merge' + i + '.csv'
                 stockdata = pd.read_csv(filename1)
-                line = stockdata[['Date','codenumber','name','Close','bookvalue','ROE','AV_ROE','D_rate','PB','E_yield']][:1]
+                line = stockdata[['date','codenumber','name','close','bookvalue','ROE','AV_ROE','D_rate','PB','E_yield']][:1]
                 frame.append(line)
                 result = pd.concat(frame)
                 result.columns=['Date','codenumber','name','Close','bookvalue','ROE','AV_ROE','D_rate','PB','预期收益率']
@@ -102,8 +111,8 @@ def send_mail():
         #msg = MIMEText(fp.read())
         fp.close()
 
-        you = ['254731853@qq.com','619216759@qq.com','389437787@qq.com','66210683@qq.com','770651456@qq.com','lf160@126.com']
-        #you = ['619216759@qq.com']
+        #you = ['254731853@qq.com','619216759@qq.com','389437787@qq.com','66210683@qq.com','770651456@qq.com','lf160@126.com']
+        you = ['619216759@qq.com']
         #you = ['619216759@qq.com','77406458@qq.com']
         me = '13760613343@139.com'
         msg['Subject'] = '昨日的内银股PB排行'
@@ -122,10 +131,10 @@ def update_into_mysql():
     os.system('sh /root/sh_dir/easypb_update_into_msyql.sh')
 
 if __name__ ==  "__main__":
-    collect()
+    collect_new()
     change_dataframe()
     merge()
     collect_pb()
     change_csv_html()
     send_mail()
-    update_into_mysql()
+#    update_into_mysql()
