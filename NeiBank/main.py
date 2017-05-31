@@ -5,10 +5,14 @@ import pandas as pd
 import random
 import os
 import smtplib
+import tushare as ts
 from email.mime.text import MIMEText
+from pandas_datareader import data as pdr
+import fix_yahoo_finance
+import datetime
 
-banknum='/lin/easybankPB/NeiBank/banknum.md'
-#banknum='/Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/banknumtest.md'
+#banknum='/lin/easybankPB/NeiBank/banknum.md'
+banknum='/Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/NeiBank/test.md'
 ## collect data from yahoo finance
 def collect():
     with open(banknum,'r') as f:
@@ -16,6 +20,17 @@ def collect():
             url = 'http://table.finance.yahoo.com/table.csv?s=' + i +'.HK'
             filename = i + '.csv'
             urllib.urlretrieve (url, filename)
+
+def collect_new():
+    today = datetime.date.today()
+    with open(banknum,'r') as f:
+        for i in f.read().splitlines():
+            tickers = i + '.HK'
+            filename = i + '.csv'
+            data2 = pdr.get_data_yahoo(tickers, start="2006-01-01", end=today)
+            data2.sort_index(ascending=False).to_csv(filename)
+
+
 
 ## change pbvs to DataFrame
 def change_dataframe():
@@ -71,7 +86,7 @@ def merge():
                         merge.loc[num2:num1,'Changerate'] = merge['Changerate'][num1]
                         merge.loc[num2:num1,'ROE'] = merge['ROE'][num1]
                         merge.loc[num2:num1,'D_rate'] = merge['D_rate'][num1]
-
+s
                 merge['PB'] = merge['Close'] /( merge['Bookvalue'] / merge['Changerate'])
                 merge['AV_ROE'] = merge['ROE'].mean()
                 merge['E_yield'] = ((1 + (merge['AV_ROE']* merge['D_rate']) / (merge['PB'] - merge['AV_ROE'] * merge['D_rate'])) * (1 + merge['AV_ROE'] * (1 - merge['D_rate']))) - 1
@@ -119,7 +134,7 @@ def send_mail():
         s.quit()
 
 if __name__ ==  "__main__":
-        collect()
+#        collect_new()
         change_dataframe()
         merge()
         collect_pb()
