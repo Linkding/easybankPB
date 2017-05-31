@@ -6,6 +6,8 @@ import random
 import os
 import smtplib
 from email.mime.text import MIMEText
+from pandas_datareader import data as pdr
+import fix_yahoo_finance
 
 banknum='/Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/banknum.md'
 
@@ -16,6 +18,10 @@ def collect():
             url = 'http://table.finance.yahoo.com/table.csv?s=' + i +'.HK'
             filename = i + '.csv'
             urllib.urlretrieve (url, filename)
+
+def collect_new():
+    data = pdr.get_data_yahoo("0939.HK", start="2017-01-01", end="2017-04-30")
+    data.to_csv('0939.csv')
 
 ## change pbvs to DataFrame
 def change_dataframe():
@@ -107,9 +113,9 @@ def send_mail():
         s.quit()
 
 if __name__ ==  "__main__":
-#        collect()
+        collect_new()
 #        change_dataframe()
 #        merge()
 #        collect_pb()
 #        change_csv_html()
-        send_mail()
+#        send_mail()
