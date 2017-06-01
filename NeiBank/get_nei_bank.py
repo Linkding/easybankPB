@@ -104,17 +104,20 @@ def change_csv_html():
     os.system('sh /lin/easybankPB/NeiBank/cvs2html.sh')
     os.system('cat /lin/easybankPB/NeiBank/hk_pb.html >>/lin/easybankPB/NeiBank/nei_pb.html')
 def send_mail():
+	pwd = os.getenv('MAIL_PW')
+	mail_ser = os.getenv('MAIL_SER')
+	mail_account = os.getenv('MAIL_account')
+	sender = os.getenv('MAIL_SENDER')
         fp = open('nei_pb.html', 'r')
-
         msg = MIMEText(fp.read(),'html')
         # Create a text/plain message
         #msg = MIMEText(fp.read())
         fp.close()
 
-        #you = ['254731853@qq.com','619216759@qq.com','389437787@qq.com','66210683@qq.com','770651456@qq.com','lf160@126.com']
-        you = ['619216759@qq.com']
+        you = ['1105996033@qq.com','172055532@qq.com','1826994518@qq.com','254731853@qq.com','619216759@qq.com','389437787@qq.com','66210683@qq.com','770651456@qq.com','lf160@126.com']
+        #you = ['619216759@qq.com']
         #you = ['619216759@qq.com','77406458@qq.com']
-        me = '13760613343@139.com'
+        me = sender
         msg['Subject'] = '昨日的内银股PB排行'
         msg['To']=','.join(you)
         msg['From'] = me
@@ -122,8 +125,8 @@ def send_mail():
 
         # Send the message via our own SMTP server, but don't include the
         # envelope header.
-        s = smtplib.SMTP('smtp.139.com')
-        s.login('13760613343','inaoin2016')
+        s = smtplib.SMTP(mail_ser)
+        s.login(mail_account,pwd)
         s.sendmail(me, you, msg.as_string())
         s.quit()
 

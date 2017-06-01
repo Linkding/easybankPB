@@ -11,8 +11,8 @@ from pandas_datareader import data as pdr
 import fix_yahoo_finance
 import datetime
 
-#banknum='/lin/easybankPB/NeiBank/banknum.md'
-banknum='/Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/NeiBank/test.md'
+banknum='/lin/easybankPB/NeiBank/banknum.md'
+#banknum='/Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/NeiBank/test.md'
 ## collect data from yahoo finance
 def collect():
     with open(banknum,'r') as f:
@@ -86,7 +86,7 @@ def merge():
                         merge.loc[num2:num1,'Changerate'] = merge['Changerate'][num1]
                         merge.loc[num2:num1,'ROE'] = merge['ROE'][num1]
                         merge.loc[num2:num1,'D_rate'] = merge['D_rate'][num1]
-s
+
                 merge['PB'] = merge['Close'] /( merge['Bookvalue'] / merge['Changerate'])
                 merge['AV_ROE'] = merge['ROE'].mean()
                 merge['E_yield'] = ((1 + (merge['AV_ROE']* merge['D_rate']) / (merge['PB'] - merge['AV_ROE'] * merge['D_rate'])) * (1 + merge['AV_ROE'] * (1 - merge['D_rate']))) - 1
@@ -111,32 +111,10 @@ def change_csv_html():
     os.system('python /lin/csv2html/csv2html/csv2html.py -o /lin/easybankPB/NeiBank/hk_pb.html /lin/easybankPB/NeiBank/hk_pb.csv')
 
 
-def send_mail():
-        fp = open('hk_pb.html', 'r')
-
-        msg = MIMEText(fp.read(),'html')
-        # Create a text/plain message
-        #msg = MIMEText(fp.read())
-        fp.close()
-
-        you = ['619216759@qq.com']
-        me = '13760613343@139.com'
-        msg['Subject'] = '香港内银股PB排行'
-        msg['To']=','.join(you)
-        msg['From'] = me
-        #msg['To'] = you
-
-        # Send the message via our own SMTP server, but don't include the
-        # envelope header.
-        s = smtplib.SMTP('smtp.139.com')
-        s.login('13760613343','****')
-        s.sendmail(me, you, msg.as_string())
-        s.quit()
 
 if __name__ ==  "__main__":
-#        collect_new()
+        collect_new()
         change_dataframe()
         merge()
         collect_pb()
         change_csv_html()
-#        send_mail()
