@@ -105,7 +105,10 @@ def collect_pb():
 
 def change_csv_html():
     os.system('sh /lin/easybankPB/NeiBank/cvs2html.sh')
+    #os.system('sh /Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/NeiBank/cvs2html.sh')
     os.system('cat /lin/easybankPB/NeiBank/hk_pb.html >>/lin/easybankPB/NeiBank/nei_pb.html')
+    #os.system('cat /Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/NeiBank/hk_pb.html >>/Users/Linkding/Linkding.com/project.Linkding.com/easybankPB/NeiBank/nei_pb.html')
+
 def send_mail():
     pwd = os.getenv('MAIL_PW')
     mail_ser = os.getenv('MAIL_SER')
@@ -116,23 +119,27 @@ def send_mail():
     # Create a text/plain message
     #msg = MIMEText(fp.read())
     fp.close()
-    with open(maillist,'r') as f:
-            for i in f.read().splitlines():
-                #you = ['1105996033@qq.com','172055532@qq.com','1826994518@qq.com','254731853@qq.com','619216759@qq.com','389437787@qq.com','66210683@qq.com','770651456@qq.com','lf160@126.com']
+    #with open(maillist,'r') as f:
+    me = sender
+    msg['Subject'] = '昨日银行股数据'
+    msg['From'] = me
+    #for i in f.read().splitlines():
+    you1 = ['1105996033@qq.com','172055532@qq.com','1826994518@qq.com','254731853@qq.com','619216759@qq.com','389437787@qq.com','66210683@qq.com','770651456@qq.com','lf160@126.com']
+    you2 = ['542627142@qq.com']
+    #you1 = ['619216759@qq.com']
+    #you2 = ['2413557718@qq.com']
+    msg['To']=','.join(you1)
+    #msg['To']= i
+    #print msg['To']
 
-                you = [i]
-                me = sender
-                msg['Subject'] = 'nihao'
-                msg['To']=','.join(you)
-                msg['From'] = me
-            #msg['To'] = you
 
-            # Send the message via our own SMTP server, but don't include the
-            # envelope header.
-                s = smtplib.SMTP(mail_ser)
-                s.login(mail_account,pwd)
-                s.sendmail(me, you, msg.as_string())
-                s.quit()
+    # Send the message via our own SMTP server, but don't include the
+    # envelope header.
+    s = smtplib.SMTP(mail_ser)
+    s.login(mail_account,pwd)
+    s.sendmail(me, you1, msg.as_string())
+    s.sendmail(me, you2, msg.as_string())
+    s.quit()
 
 def update_into_mysql():
     os.system('sh /root/sh_dir/easypb_update_into_msyql.sh')
